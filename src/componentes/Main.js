@@ -1,9 +1,9 @@
-import { getByPlaceholderText } from '@testing-library/react';
+// import { getByPlaceholderText } from '@testing-library/react';
 import { useState, useEffect } from 'react';
 
 
 // component Libraries
-import { Route } from 'react-router-dom';
+import { Route, } from 'react-router-dom';
 
 // page components
 import Index from '../pages';
@@ -25,7 +25,7 @@ const Main = (props) => {
         setPeople(data);
     };
 
-    const createPeople = async (person) => {
+    const createPeople = async (updatePerson) => {
         await fetch(URL, {
             method: 'POST',
             headers: {
@@ -36,19 +36,42 @@ const Main = (props) => {
         })
     };
 
+    const updatePeople = async (updatedPerson, id) => {
+        await fetch (URL + id, {
+            method: 'PUT',
+            headers: {
+                'Content-type': 'Aplication/json'
+            },
+            body: JSON.stringify(Person)
+        });
+        getPeople();
+    }
+
+
+    const deletePeople = async (id) => {
+        await fetch (URL + id, {method: DELETE});
+    }
     useEffect(() => {
         getPeople();
     }, []);
 
     return (
         <main>
+        <switch>
             <Route exact path="/">
                 <Index people={people} createPeople={createPeople} />
             </Route>
-            <Route path="/people/:id" render={(rp) => 
-            <Show {...rp} />
-            } />
-            
+            <Route path="/people/:id" render={(rp) => (
+              <Show
+              {...rp}
+              people={people}
+              updatePeople={updatePeople}
+              deletePeople={deletePeople}
+              
+            />
+          )}
+        />
+      </switch>
         </main>
     );
 }

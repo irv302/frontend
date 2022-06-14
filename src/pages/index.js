@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Index = (props) => {
@@ -7,9 +8,21 @@ const Index = (props) => {
     image: "",
   });
 
-  const handleChange = (event) => {};
-
-  const handleSubmit = (event) => {};
+  const handleChange = (event) => {
+    setNewForm({
+        ...newForm,
+        [event.target.name]: event.target.value
+    })
+  }
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    props.createPeople(newForm);
+    setNewForm({
+      name: "",
+      image: "",
+      title: "",
+  });
+}
 
   const loaded = () => {
     return props.people.map((person) => (
@@ -17,7 +30,7 @@ const Index = (props) => {
         <Link to={`/people/${person._id}`}>
           <h1>{person.name}</h1>
         </Link>
-        {person.image && <img src={person.image} alt={person.name} />}
+        <img src={person.image} alt={person.name} />
         <h3>{person.title}</h3>
       </div>
     ));
@@ -28,28 +41,31 @@ const Index = (props) => {
 
   return (
     <section>
-      <form>
+      <form onSubmit={handleSubmit}>
         <input
           value={newForm.name}
           name="name"
           onChange={handleChange}
+          placeholder="name"
           type="text"
         />
         <input
           value={newForm.title}
           name="title"
           onChange={handleChange}
+          placeholder="title"
           type="text"
         />
         <input
           value={newForm.image}
           name="iamge"
           onChange={handleChange}
+          placeholder="image URL"
           type="text"
         />
         <input type="submit" value="Create Person" />
       </form>
-      {props.people ? loaded : loading()}
+      {props.people ? <ol style={{textAlign: "left"}}>{loaded()} </ol>: loading()}
     </section>
   );
 };
